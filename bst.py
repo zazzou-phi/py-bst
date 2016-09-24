@@ -18,6 +18,34 @@ class Node:
         self.left_child = None
         self.right_child = None
 
+    # Print the node
+    def __str__(self):
+        # Find left node value
+        if self.left_child is None:
+            left = " "
+        else:
+            left = str(self.left_child.key)
+        
+        # Find right node value
+        if self.right_child is None:
+            right = " "
+        else:
+            right = str(self.right_child.key)
+
+        # Draw node with children
+        string = "  " + str(self.key) + "\n"
+        string += " / \ \n"
+        string += " " + left + " " + right
+
+        # Draw parent if it exists
+        if self.parent is not None:
+            if self.key < self.parent.key:
+                string = "   " + str(self.parent.key) + "\n  /\n" + string
+            else:
+                string = " " + str(self.parent.key) + "\n  \ \n" + string
+        
+        return string
+
 class BST:
     """
     Implementation of a Binary Search Tree
@@ -27,10 +55,8 @@ class BST:
     def __init__(self):
         self.root = None
 
+    # Inserts a value into the tree as a new node
     def insert(self, value):
-        # Inserts a value into the tree as a new node
-       
-        
         if isinstance(value, (int, float, long)): # Make sure it's a number    
             node = Node(value) # Initialise a node with the correct value
             if self.root is None:
@@ -54,18 +80,37 @@ class BST:
                             node.parent = current_node
                             break
                         current_node = current_node.right_child
-            print("Inserted " + str(value) + " into BST successfully.")
+            print node
         else:
             print("Please enter a (non-complex) number")
 
+    # Sorts the tree in ascending order
     def inorder_tree_walk(self, node):
-        # Sorts the tree in ascending order
-        if node is None:
+        if node is None: # Finished
             return
         else:
-            self.inorder_tree_walk(node.left_child)
-            print node.key
-            self.inorder_tree_walk(node.right_child)
+            self.inorder_tree_walk(node.left_child) # Go all the way left
+            print node.key # Print the value
+            self.inorder_tree_walk(node.right_child) # Go right
+
+    # Searches tree for a particular value and prints the node
+    def search(self, node, value):
+        # Didn't find the value
+        if node is None:
+            print("Value not found")
+            return
+
+        # Found the value
+        if value == node.key:
+            print node
+            return
+
+        # The search part
+        if value < node.key:
+            self.search(node.left_child, value)
+        else:
+            self.search(node.right_child, value)
+
 
     # Print the tree... not my implementation
     def __str__(self):
