@@ -111,7 +111,20 @@ class BST:
         else:
             self.search(node.right_child, value)
 
+    # Find the maximum
+    def maximum(self):
+        node = self.root # Start from root
+        while node.right_child is not None:
+            node = node.right_child
+        return node.key
 
+    # Find the minimum
+    def minimum(self):
+        node = self.root # Start from root
+        while node.left_child is not None:
+            node = node.left_child
+        return node.key
+    
     # Print the tree... not my implementation
     def __str__(self):
         if self.root is None: return '<empty tree>'
