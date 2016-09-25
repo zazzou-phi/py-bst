@@ -33,7 +33,7 @@ class Node:
             right = str(self.right_child.key)
 
         # Draw node with children
-        string = "  " + str(self.key) + "\n"
+        string = " |" + str(self.key) + "|\n"
         string += " / \ \n"
         string += " " + left + " " + right
 
@@ -45,6 +45,8 @@ class Node:
                 string = " " + str(self.parent.key) + "\n  \ \n" + string
         
         return string
+
+default = object()
 
 class BST:
     """
@@ -85,7 +87,10 @@ class BST:
             print("Please enter a (non-complex) number")
 
     # Sorts the tree in ascending order
-    def inorder_tree_walk(self, node):
+    def inorder_tree_walk(self, node=default):
+        if node is default:
+            node = self.root
+
         if node is None: # Finished
             return
         else:
@@ -94,7 +99,10 @@ class BST:
             self.inorder_tree_walk(node.right_child) # Go right
 
     # Searches tree for a particular value and prints the node
-    def search(self, node, value):
+    def search(self, value, node=default):
+        if node is default:
+            node = self.root
+
         # Didn't find the value
         if node is None:
             print("Value not found")
@@ -107,24 +115,56 @@ class BST:
 
         # The search part
         if value < node.key:
-            self.search(node.left_child, value)
+            self.search(value, node.left_child)
         else:
-            self.search(node.right_child, value)
+            self.search(value, node.right_child)
 
     # Find the maximum
-    def maximum(self):
-        node = self.root # Start from root
+    def maximum(self, node=default):
+        if node is default:
+            node = self.root
+
         while node.right_child is not None:
             node = node.right_child
-        return node.key
+        print node.key
 
     # Find the minimum
-    def minimum(self):
-        node = self.root # Start from root
+    def minimum(self, node=default):
+        if node is default:
+            node = self.root
+
         while node.left_child is not None:
             node = node.left_child
-        return node.key
-    
+        print node.key
+
+    # Given a node, find the successor i.e. next greatest value
+    def successor(self, node):
+        if node.right_child is not None:
+            return self.minimum(node.right_child)
+        parent_node = node.parent
+        while parent_node is not None and node == parent_node.right_child:
+            node = parent_node
+            parent_node = parent_node.parent
+        if parent_node is None:
+            print("Node has no succesor")
+            return
+        else:
+            return parent_node.key
+
+    # Given a node, find the predecessor i.e. next value less than the given node
+    def predecessor(self, node):
+        if node.left_child is not None:
+            return self.maximum(node.left_child)
+        parent_node = node.parent
+        while parent_node is not None and node == parent_node.left_child:
+            node = parent_node
+            parent_node = parent_node.parent
+        if parent_node is None:
+            print("Node has no predecessor")
+            return
+        else:
+            return parent_node.key
+
     # Print the tree... not my implementation
     def __str__(self):
         if self.root is None: return '<empty tree>'
