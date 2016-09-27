@@ -86,6 +86,40 @@ class BST:
         else:
             print("Please enter a (non-complex) number")
 
+    # Insert without printing node
+    def _insert(self, value):
+        if isinstance(value, (int, float, long)): # Make sure it's a number    
+            node = Node(value) # Initialise a node with the correct value
+            if self.root is None:
+                self.root = node # Tree is empty so insert first node
+            else:
+                current_node = self.root
+                while True:
+                    if value < current_node.key:
+                        # Go left if value is less than the current node key
+                        if current_node.left_child is None:
+                            # Node goes here if there is no left child
+                            current_node.left_child = node
+                            node.parent = current_node
+                            break
+                        current_node = current_node.left_child
+                    else:
+                        # Go right
+                        if current_node.right_child is None:
+                            # Node goes here if there is no right child
+                            current_node.right_child = node
+                            node.parent = current_node
+                            break
+                        current_node = current_node.right_child
+        else:
+            print("Couldn't insert" + str(value))
+
+    # Insert an array of values into the tree
+    def insert_array(self, values):
+        for x in values:
+            self._insert(x)
+        print self
+
     # Sorts the tree in ascending order
     def inorder_tree_walk(self, node=default):
         if node is default:
@@ -127,6 +161,15 @@ class BST:
         while node.right_child is not None:
             node = node.right_child
         print node.key
+    
+    # Same as maximum but returns node
+    def _maximum(self, node=default):
+        if node is default:
+            node = self.root
+
+        while node.right_child is not None:
+            node = node.right_child
+        return node
 
     # Find the minimum
     def minimum(self, node=default):
@@ -136,6 +179,15 @@ class BST:
         while node.left_child is not None:
             node = node.left_child
         print node.key
+
+    # Same as minimum but returns node
+    def _minimum(self, node=default):
+        if node is default:
+            node = self.root
+
+        while node.left_child is not None:
+            node = node.left_child
+        return node
 
     # Given a node, find the successor i.e. next greatest value
     def successor(self, node):
@@ -151,6 +203,19 @@ class BST:
         else:
             return parent_node.key
 
+    # Same as above but returns node
+    def _successor(self, node):
+        if node.right_child is not None:
+            return self._minimum(node.right_child)
+        parent_node = node.parent
+        while parent_node is not None and node == parent_node.right_child:
+            node = parent_node
+            parent_node = parent_node.parent
+        if parent_node is None:
+            return None
+        else:
+            return parent_node
+
     # Given a node, find the predecessor i.e. next value less than the given node
     def predecessor(self, node):
         if node.left_child is not None:
@@ -164,6 +229,47 @@ class BST:
             return
         else:
             return parent_node.key
+
+    # Same as predecessor but returns node
+    def _predecessor(self, node):
+        if node.left_child is not None:
+            return self._maximum(node.left_child)
+        parent_node = node.parent
+        while parent_node is not None and node == parent_node.left_child:
+            node = parent_node
+            parent_node = parent_node.parent
+        if parent_node is None:
+            return None
+        else:
+            return parent_node
+
+    # Replace subtree as child of its parent with another subtree
+    def transplant(self, node1, node2):
+        if node1.parent is None:
+            self.root = node2
+        elif node1 is node1.parent.left_child:
+            node1.parent.left_child = node2
+        else:
+            node1.parent.right_child = node2
+
+        if node2 is not None:
+            node2.parent = node1.parent
+
+    # Delete a node
+    def delete(self, node):
+        if node.left_child is None:
+            self.transplant(node, node.right_child)
+        elif node.right_child is None:
+            self.transplant(node, node.left_child)
+        else:
+            node_min = self._minimum(node.right_child)
+            if node_min.parent is not node:
+                self.transplant(node_min, node_min.right_child)
+                node_min.right_child = node.right_child
+                node_min.right_child.parent = node_min
+            self.transplant(node, node_min)
+            node_min.left_child = node.left_child
+            node_min.left_child.parent = node_min
 
     # Print the tree... not my implementation
     def __str__(self):
