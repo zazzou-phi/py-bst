@@ -133,7 +133,7 @@ class BST:
             self.inorder_tree_walk(node.right_child) # Go right
 
     # Searches tree for a particular value and prints the node
-    def search(self, value, node=default):
+    def search(self, value, node=default, return_node=False):
         if node is default:
             node = self.root
 
@@ -144,105 +144,95 @@ class BST:
 
         # Found the value
         if value == node.key:
-            print node
-            return
-
+            if return_node == False:
+                print node
+                return
+            else:
+                return node
+        
         # The search part
         if value < node.key:
-            self.search(value, node.left_child)
+            self.search(value, node.left_child, return_node)
         else:
-            self.search(value, node.right_child)
-
-    # Find the maximum
-    def maximum(self, node=default):
-        if node is default:
-            node = self.root
-
-        while node.right_child is not None:
-            node = node.right_child
-        print node.key
+            self.search(value, node.right_child, return_node)
     
-    # Same as maximum but returns node
-    def _maximum(self, node=default):
+    # Find the maximum
+    def maximum(self, node=default, return_node=False):
         if node is default:
             node = self.root
 
         while node.right_child is not None:
             node = node.right_child
-        return node
+        if return_node == False:
+            print node.key
+        else:
+            return node
 
     # Find the minimum
-    def minimum(self, node=default):
+    def minimum(self, node=default, return_node=False):
         if node is default:
             node = self.root
 
         while node.left_child is not None:
             node = node.left_child
-        print node.key
-
-    # Same as minimum but returns node
-    def _minimum(self, node=default):
-        if node is default:
-            node = self.root
-
-        while node.left_child is not None:
-            node = node.left_child
-        return node
+        if return_node == False:
+            print node.key
+        else:
+            return node
 
     # Given a node, find the successor i.e. next greatest value
-    def successor(self, node):
-        if node.right_child is not None:
-            return self.minimum(node.right_child)
-        parent_node = node.parent
-        while parent_node is not None and node == parent_node.right_child:
-            node = parent_node
-            parent_node = parent_node.parent
-        if parent_node is None:
-            print("Node has no succesor")
+    def successor(self, key, return_node=False):
+        node = self.search(key, self.root, True)
+        if node is None:
+            print(str(key) + " was not found in tree")
             return
-        else:
-            return parent_node.key
 
-    # Same as above but returns node
-    def _successor(self, node):
         if node.right_child is not None:
-            return self._minimum(node.right_child)
+            return self.minimum(node.right_child, return_node)
+
         parent_node = node.parent
         while parent_node is not None and node == parent_node.right_child:
             node = parent_node
             parent_node = parent_node.parent
         if parent_node is None:
-            return None
+            if return_node == False:
+                print("Node has no succesor")
+                return
+            else:
+                return None
         else:
-            return parent_node
+            if return_node == False:
+                return parent_node.key
+            else:
+                return parent_node
 
     # Given a node, find the predecessor i.e. next value less than the given node
-    def predecessor(self, node):
-        if node.left_child is not None:
-            return self.maximum(node.left_child)
-        parent_node = node.parent
-        while parent_node is not None and node == parent_node.left_child:
-            node = parent_node
-            parent_node = parent_node.parent
-        if parent_node is None:
-            print("Node has no predecessor")
+    def predecessor(self, key, return_node=False):
+        node = self.search(key, self.root, True)
+        if node is None:
+            print(str(key) + " was not found in tree")
             return
-        else:
-            return parent_node.key
 
-    # Same as predecessor but returns node
-    def _predecessor(self, node):
         if node.left_child is not None:
-            return self._maximum(node.left_child)
+            return self.maximum(node.left_child, return_node)
+
         parent_node = node.parent
         while parent_node is not None and node == parent_node.left_child:
             node = parent_node
             parent_node = parent_node.parent
-        if parent_node is None:
-            return None
-        else:
-            return parent_node
 
+        if parent_node is None:
+            if return_node == False:
+                print("Node has no predecessor")
+                return
+            else:
+                return None
+        else:
+            if return_node == False:
+                return parent_node.key
+            else:
+                return parent_node
+            
     # Replace subtree as child of its parent with another subtree
     def transplant(self, node1, node2):
         if node1.parent is None:
@@ -262,7 +252,7 @@ class BST:
         elif node.right_child is None:
             self.transplant(node, node.left_child)
         else:
-            node_min = self._minimum(node.right_child)
+            node_min = self.minimum(node.right_child, True)
             if node_min.parent is not node:
                 self.transplant(node_min, node_min.right_child)
                 node_min.right_child = node.right_child
