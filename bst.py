@@ -140,7 +140,7 @@ class BST:
         # Didn't find the value
         if node is None:
             print("Value not found")
-            return
+            return node
 
         # Found the value
         if value == node.key:
@@ -152,10 +152,27 @@ class BST:
         
         # The search part
         if value < node.key:
-            self.search(value, node.left_child, return_node)
+            return self.search(value, node.left_child, return_node)
         else:
-            self.search(value, node.right_child, return_node)
+            return self.search(value, node.right_child, return_node)
     
+    # Search iteratively
+    def search_iteratively(self, value, node=default, return_node=False):
+        if node is default:
+            node = self.root
+        current_node = node
+        while current_node is not None:
+            if value == current_node.key:
+                if return_node == False:
+                    print node
+                    return
+                else:
+                    return current_node
+            elif value < current_node.key:
+                current_node = current_node.left_child
+            else:
+                current_node = current_node.right_child
+        
     # Find the maximum
     def maximum(self, node=default, return_node=False):
         if node is default:
