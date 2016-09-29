@@ -17,6 +17,7 @@ class Node:
         self.parent = None
         self.left_child = None
         self.right_child = None
+        self.height = 0
 
     # Print the node
     def __str__(self):
@@ -33,7 +34,7 @@ class Node:
             right = str(self.right_child.key)
 
         # Draw node with children
-        string = " |" + str(self.key) + "|\n"
+        string = " (" + str(self.key) + ")\n"
         string += " / \ \n"
         string += " " + left + " " + right
 
@@ -58,7 +59,7 @@ class BST:
         self.root = None
 
     # Inserts a value into the tree as a new node
-    def insert(self, value):
+    def insert(self, value, return_node=False):
         if isinstance(value, (int, float, long)): # Make sure it's a number    
             node = Node(value) # Initialise a node with the correct value
             if self.root is None:
@@ -82,42 +83,17 @@ class BST:
                             node.parent = current_node
                             break
                         current_node = current_node.right_child
-            print node
-        else:
-            print("Please enter a (non-complex) number")
-
-    # Insert without printing node
-    def _insert(self, value):
-        if isinstance(value, (int, float, long)): # Make sure it's a number    
-            node = Node(value) # Initialise a node with the correct value
-            if self.root is None:
-                self.root = node # Tree is empty so insert first node
+            if return_node == False:
+                return
             else:
-                current_node = self.root
-                while True:
-                    if value < current_node.key:
-                        # Go left if value is less than the current node key
-                        if current_node.left_child is None:
-                            # Node goes here if there is no left child
-                            current_node.left_child = node
-                            node.parent = current_node
-                            break
-                        current_node = current_node.left_child
-                    else:
-                        # Go right
-                        if current_node.right_child is None:
-                            # Node goes here if there is no right child
-                            current_node.right_child = node
-                            node.parent = current_node
-                            break
-                        current_node = current_node.right_child
+                return node
         else:
-            print("Couldn't insert" + str(value))
+            print("Couldn't insert " + str(value) + ". Please enter a (non-complex) number")
 
     # Insert an array of values into the tree
     def insert_array(self, values):
         for x in values:
-            self._insert(x)
+            self.insert(x)
         print self
 
     # Sorts the tree in ascending order
